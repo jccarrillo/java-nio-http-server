@@ -191,9 +191,6 @@ public class NioHttpServerBuilder implements Builder<HttpServer> {
 				if (!StringUtils.isEmpty(line)) {
 					continue;
 				}
-				StringBuilder stringBuilder = httpRequestHandler.getReadLines();
-				String raw = stringBuilder.toString();
-				this.logger.debug("Received:\n{}", raw);
 				// write the next round
 				selectionKey.interestOps(SelectionKey.OP_WRITE);
 			}
@@ -218,6 +215,7 @@ public class NioHttpServerBuilder implements Builder<HttpServer> {
 			this.logger.debug("Handler [{}]", httpRequestHandler);
 			StringBuilder stringBuilder = httpRequestHandler.getReadLines();
 			String raw = stringBuilder.toString();
+			this.logger.debug("Received:\n{}", raw);
 			// build request
 			HttpRequest request = new HttpRequestBuilder(raw).build();
 			HttpResponse httpResponse = new HttpResponseBuilder().build();
