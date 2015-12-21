@@ -8,7 +8,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -70,8 +70,7 @@ public class NioHttpServerBuilder implements Builder<HttpServer> {
 					this.selector.select(TIMEOUT);
 					// get actions
 					Set<SelectionKey> selectedKeys = this.selector.selectedKeys();
-					LinkedList<SelectionKey> keys = new LinkedList<>(selectedKeys);
-					handleSelectionKeys(keys);
+					handleSelectionKeys(selectedKeys);
 				}
 			} catch (IOException ex) {
 				stop();
@@ -86,7 +85,7 @@ public class NioHttpServerBuilder implements Builder<HttpServer> {
 		 *            the selection keys.
 		 * @throws IOException
 		 */
-		private void handleSelectionKeys(LinkedList<SelectionKey> selectionKeys) throws IOException {
+		private void handleSelectionKeys(Set<SelectionKey> selectionKeys) throws IOException {
 			if (CollectionUtils.isEmpty(selectionKeys)) {
 				// nothing happened
 				return;
@@ -94,10 +93,10 @@ public class NioHttpServerBuilder implements Builder<HttpServer> {
 			int size = selectionKeys.size();
 			this.logger.info("Handling [{}] selection keys", size);
 			// something happened
-			while (!selectionKeys.isEmpty()) {
-				SelectionKey selectionKey = selectionKeys.pop();
-				this.logger.info("Handling [{}] selection key", selectionKey.interestOps());
-				this.logger.debug("Channel: {}", selectionKey.channel());
+			Iterator<SelectionKey> iterator = selectionKeys.iterator();
+			while (iterator.hasNext()) {
+				SelectionKey selectionKey = iterator.next();
+				iterator.remove();
 				this.logger.debug("Remaining [{}] selection keys", selectionKeys.size());
 				// remove as to not process again.
 				try {
