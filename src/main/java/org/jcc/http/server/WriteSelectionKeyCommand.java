@@ -33,7 +33,6 @@ public class WriteSelectionKeyCommand implements SelectionKeyCommand {
 		this.logger.debug("Handler [{}]", httpRequestHandler);
 		StringBuilder stringBuilder = httpRequestHandler.getReadLines();
 		String raw = stringBuilder.toString();
-		this.logger.debug("Received:\n{}", raw);
 		// build request
 		HttpRequest request = new HttpRequestBuilder(raw).build();
 		HttpResponse httpResponse = new HttpResponseBuilder().build();

@@ -32,12 +32,14 @@ public class ReadSelectionKeyCommand implements SelectionKeyCommand {
 		this.logger.debug("Reading selection key");
 		// get the httpRequestHandler
 		HttpRequestHandler httpRequestHandler = (HttpRequestHandler) selectionKey.attachment();
+		this.logger.debug("Handler [{}]", httpRequestHandler);
 		// create it if it doesn't exist
 		if (httpRequestHandler == null) {
 			this.logger.debug("Creating Handler");
 			httpRequestHandler = new HttpRequestHandlerBuilder().build();
 			selectionKey.attach(httpRequestHandler);
 		}
+		httpRequestHandler = (HttpRequestHandler) selectionKey.attachment();
 		this.logger.debug("Handler [{}]", httpRequestHandler);
 		SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 		// get more data
@@ -52,7 +54,7 @@ public class ReadSelectionKeyCommand implements SelectionKeyCommand {
 		String line;
 		while ((line = httpRequestHandler.line()) != null) {
 			// check if we have got everything
-			if (!StringUtils.isEmpty(line)) {
+			if (StringUtils.isNotEmpty(line)) {
 				continue;
 			}
 			// write the next round
